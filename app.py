@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd 
 import numpy as np
 import os 
-from streamlit_pandas_profiling import st_profile_report
 from ydata_profiling import ProfileReport
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 # Importing necessary libraries for the Streamlit app
@@ -50,12 +49,13 @@ if choice == "Upload":
         df.to_csv("sourcedata.csv", index=None)  # Save the uploaded file
         st.dataframe(df)  # Display the uploaded data
 
-# Profiling page functionality
 if choice == "Profiling":
     st.title("Exploratory Data Analysis")
-    profile_df = df.profile_report()  # Generate a profile report for the data
-    st_profile_report(profile_df)  # Display the profile report
-
+    if "df" not in locals():
+        st.warning("No dataset found. Please upload a file first!")
+    else:
+        profile = ProfileReport(df, title="Pandas Profiling Report", explorative=True)  # Generate a profile report
+        st.components.v1.html(profile.to_html(), height=800, scrolling=True)  # Display the profile report
 # Modelling page functionality
 if choice == "Modelling":
     st.title("Select Problem Type for modelling")
